@@ -1,0 +1,93 @@
+{% extends "core/base.html" %}
+{% block title %}Estoque{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h2 class="mb-0">📦 Estoque</h2>
+    <small class="text-muted">Medicamentos e fraldas por paciente</small>
+  </div>
+
+  <div class="d-flex gap-2">
+    <a class="btn btn-primary" href="{% url 'estoque_med_create' %}">➕ Entrada Medicamento</a>
+    <a class="btn btn-outline-primary" href="{% url 'estoque_fralda_create' %}">➕ Entrada Fralda</a>
+  </div>
+</div>
+
+{% if meds_alerta or fraldas_alerta %}
+<div class="alert alert-warning">
+  <b>⚠ Estoque baixo:</b>
+  <ul class="mb-0">
+    {% for x in meds_alerta %}
+      <li>{{ x.paciente.nome }} — {{ x.nome_medicamento }}: {{ x.quantidade_atual }} {{ x.unidade }}</li>
+    {% endfor %}
+    {% for x in fraldas_alerta %}
+      <li>{{ x.paciente.nome }} — Fralda {{ x.tipo }}: {{ x.quantidade_atual }} un</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<div class="row g-3">
+  <div class="col-md-7">
+    <div class="card shadow-sm border-0" style="border-radius:16px;">
+      <div class="card-body">
+        <h5 class="mb-3">💊 Estoque de Medicamentos</h5>
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th>Paciente</th>
+              <th>Medicamento</th>
+              <th>Qtd</th>
+              <th>Mínimo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in meds %}
+              <tr>
+                <td>{{ m.paciente.nome }}</td>
+                <td>{{ m.nome_medicamento }}</td>
+                <td><b>{{ m.quantidade_atual }}</b> {{ m.unidade }}</td>
+                <td>{{ m.alerta_minimo }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4">Sem registros de estoque de medicamentos.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-5">
+    <div class="card shadow-sm border-0" style="border-radius:16px;">
+      <div class="card-body">
+        <h5 class="mb-3">🧷 Estoque de Fraldas</h5>
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th>Paciente</th>
+              <th>Tipo</th>
+              <th>Qtd</th>
+              <th>Consumo/dia</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for f in fraldas %}
+              <tr>
+                <td>{{ f.paciente.nome }}</td>
+                <td>{{ f.tipo }}</td>
+                <td><b>{{ f.quantidade_atual }}</b></td>
+                <td>{{ f.consumo_dia }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4">Sem registros de estoque de fraldas.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

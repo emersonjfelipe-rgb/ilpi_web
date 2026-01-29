@@ -1,0 +1,37 @@
+/* Toast */
+.toast-app {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  padding: 12px 18px;
+  border-radius: 6px;
+  color: #fff;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 9999;
+}
+.toast-app.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.toast-success { background: #28a745; }
+.toast-error { background: #dc3545; }
+
+/* Cards */
+.card-soft {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+}
+
+/* Alertas */
+.badge-alert {
+  background: #dc3545;
+  color: #fff;
+}
+.badge-ok {
+  background: #28a745;
+  color: #fff;
+}

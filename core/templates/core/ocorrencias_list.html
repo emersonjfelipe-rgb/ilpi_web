@@ -1,0 +1,90 @@
+{% extends "core/base.html" %}
+{% block title %}Ocorrências - ILPI{% endblock %}
+
+{% block content %}
+<div class="page-title">
+  <h1>Ocorrências</h1>
+  <div style="display:flex; gap:10px;">
+    <a class="btn btn-ghost" href="/ocorrencias/pdf/?{{ request.GET.urlencode }}">Exportar PDF</a>
+    <a class="btn btn-primary" href="/ocorrencias/nova/">Nova ocorrência</a>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:12px;">
+  <form method="get" class="grid" style="align-items:end;">
+    <div class="col-4">
+      <label>Paciente</label>
+      <select name="paciente" class="input">
+        <option value="">Todos</option>
+        {% for p in pacientes %}
+          <option value="{{ p.id }}" {% if paciente_id == p.id|stringformat:"s" %}selected{% endif %}>
+            {{ p.nome }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-4">
+      <label>Status</label>
+      <select name="status" class="input">
+        <option value="">Todas</option>
+        <option value="pendente" {% if status == "pendente" %}selected{% endif %}>Pendentes</option>
+        <option value="resolvida" {% if status == "resolvida" %}selected{% endif %}>Resolvidas</option>
+      </select>
+    </div>
+
+    <div class="col-2">
+      <label>Data início</label>
+      <input class="input" type="date" name="inicio" value="{{ inicio }}">
+    </div>
+
+    <div class="col-2">
+      <label>Data fim</label>
+      <input class="input" type="date" name="fim" value="{{ fim }}">
+    </div>
+
+    <div class="col-12" style="display:flex; gap:10px;">
+      <button class="btn btn-primary" type="submit">Aplicar filtros</button>
+      <a class="btn btn-ghost" href="/ocorrencias/">Limpar</a>
+    </div>
+  </form>
+</div>
+
+<div class="grid" style="margin-bottom:12px;">
+  <div class="col-3"><div class="stat"><div class="label">Total filtrado</div><div class="value">{{ total }}</div></div></div>
+  <div class="col-3"><div class="stat"><div class="label">Pendentes</div><div class="value">{{ pendentes }}</div></div></div>
+  <div class="col-3"><div class="stat"><div class="label">Resolvidas</div><div class="value">{{ resolvidas }}</div></div></div>
+</div>
+
+<table class="table">
+  <tr>
+    <th>Paciente</th><th>Data/Hora</th><th>Tipo</th><th>Gravidade</th><th>Status</th>
+  </tr>
+
+  {% for o in ocorrencias %}
+  <tr>
+    <td>{{ o.paciente.nome }}</td>
+    <td>{{ o.data_hora }}</td>
+    <td>{{ o.tipo_ocorrencia }}</td>
+    <td>
+      {% if o.gravidade == "Baixa" %}
+        <span class="badge badge-ok">Baixa</span>
+      {% elif o.gravidade == "Média" %}
+        <span class="badge badge-warn">Média</span>
+      {% else %}
+        <span class="badge badge-danger">{{ o.gravidade }}</span>
+      {% endif %}
+    </td>
+    <td>
+      {% if o.resolvido %}
+        <span class="badge badge-ok">Resolvida</span>
+      {% else %}
+        <span class="badge badge-danger">Pendente</span>
+      {% endif %}
+    </td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="5">Nenhuma ocorrência encontrada.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

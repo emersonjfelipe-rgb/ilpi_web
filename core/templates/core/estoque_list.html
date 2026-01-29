@@ -1,0 +1,103 @@
+{% extends "core/base.html" %}
+{% block title %}Estoque{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h2 class="mb-0">Estoque</h2>
+    <small class="text-muted">Alertas por paciente + visão geral</small>
+  </div>
+
+  <div class="d-flex gap-2">
+    <form method="post" action="{% url 'processar_consumo_fraldas' %}">
+      {% csrf_token %}
+      <button class="btn btn-warning" type="submit">🧷 Processar consumo de fraldas (hoje)</button>
+    </form>
+
+    <a class="btn btn-outline-secondary" href="{% url 'dashboard' %}">⬅ Voltar</a>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-3" style="border-radius:16px;">
+  <div class="card-body">
+    <form class="row g-2" method="get">
+      <div class="col-md-4">
+        <input class="form-control" name="q" value="{{ q }}" placeholder="Buscar por paciente ou produto...">
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" name="tipo">
+          <option value="ALL" {% if tipo == "ALL" %}selected{% endif %}>Todos</option>
+          <option value="MED" {% if tipo == "MED" %}selected{% endif %}>Medicamentos</option>
+          <option value="FRA" {% if tipo == "FRA" %}selected{% endif %}>Fraldas</option>
+        </select>
+      </div>
+      <div class="col-md-5 d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Filtrar</button>
+        <a class="btn btn-outline-secondary" href="{% url 'estoque_list' %}">Limpar</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% if low_items %}
+<div class="alert alert-danger">
+  <b>⚠ Estoque baixo detectado</b> (mostrando paciente + item)
+  <ul class="mb-0">
+    {% for i in low_items %}
+      <li>
+        <b>{{ i.paciente.nome }}</b> — {{ i.produto.nome }}:
+        <b>{{ i.quantidade_atual }}</b> (mínimo {{ i.minimo_alerta }})
+        <a class="ms-2" href="{% url 'estoque_paciente' i.paciente.id %}">abrir</a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<div class="card border-0 shadow-sm" style="border-radius:16px;">
+  <div class="card-body">
+    <h5 class="mb-3">Visão geral</h5>
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>Paciente</th>
+            <th>Tipo</th>
+            <th>Item</th>
+            <th>Qtd</th>
+            <th>Mínimo</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for i in items %}
+          <tr>
+            <td>{{ i.paciente.nome }}</td>
+            <td>{% if i.produto.tipo == "MED" %}💊{% else %}🧷{% endif %} {{ i.produto.get_tipo_display }}</td>
+            <td>{{ i.produto.nome }}</td>
+            <td><b>{{ i.quantidade_atual }}</b> {{ i.produto.unidade }}</td>
+            <td>{{ i.minimo_alerta }}</td>
+            <td>
+              {% if i.baixo %}
+                <span class="badge bg-danger">Baixo</span>
+              {% else %}
+                <span class="badge bg-success">OK</span>
+              {% endif %}
+            </td>
+            <td>
+              <a class="btn btn-sm btn-outline-primary" href="{% url 'estoque_paciente' i.paciente.id %}">Abrir</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7">Nenhum item de estoque cadastrado.</td></tr>
+          {% endfor %}
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

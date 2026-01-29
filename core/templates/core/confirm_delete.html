@@ -1,0 +1,14 @@
+{% extends "core/base.html" %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block content %}
+<div class="card p-3">
+  <h3 class="mb-2">{{ titulo }}</h3>
+  <p>{{ mensagem }}</p>
+
+  <form method="post" class="d-flex gap-2">
+    {% csrf_token %}
+    <button class="btn btn-danger" type="submit">Excluir</button>
+    <a class="btn btn-outline-secondary" href="{{ voltar_url }}">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

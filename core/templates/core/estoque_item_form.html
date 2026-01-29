@@ -1,0 +1,45 @@
+{% extends "core/base.html" %}
+{% block title %}Adicionar item - Estoque{% endblock %}
+{% block content %}
+
+<h2 class="mb-3">➕ Adicionar item ao estoque</h2>
+<p class="text-muted">Paciente: <b>{{ paciente.nome }}</b></p>
+
+<div class="card border-0 shadow-sm" style="border-radius:16px;">
+  <div class="card-body">
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label class="form-label">Produto (Medicamento/Fralda)</label>
+        <select class="form-select" name="produto_id" required>
+          {% for p in produtos %}
+            <option value="{{ p.id }}">{{ p.get_tipo_display }} — {{ p.nome }} ({{ p.unidade }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="row g-2">
+        <div class="col-md-4">
+          <label class="form-label">Quantidade atual</label>
+          <input class="form-control" name="quantidade_atual" placeholder="ex: 30">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Mínimo para alerta</label>
+          <input class="form-control" name="minimo_alerta" placeholder="ex: 10">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Consumo diário (somente fraldas)</label>
+          <input class="form-control" name="consumo_diario" placeholder="ex: 6">
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 mt-3">
+        <button class="btn btn-primary" type="submit">Salvar</button>
+        <a class="btn btn-outline-secondary" href="{% url 'estoque_paciente' paciente.id %}">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

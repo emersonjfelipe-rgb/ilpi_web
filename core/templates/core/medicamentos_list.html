@@ -1,0 +1,77 @@
+{% extends "core/base.html" %}
+{% block title %}Medicamentos - ILPI{% endblock %}
+
+{% block content %}
+<div class="page-title">
+  <h1>Medicamentos</h1>
+  <div style="display:flex; gap:10px;">
+    <a class="btn btn-ghost" href="/medicamentos/pdf/?{{ request.GET.urlencode }}">Exportar PDF</a>
+    <a class="btn btn-primary" href="/medicamentos/novo/">Novo medicamento</a>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:12px;">
+  <form method="get" class="grid" style="align-items:end;">
+    <div class="col-6">
+      <label>Paciente</label>
+      <select name="paciente" class="input">
+        <option value="">Todos</option>
+        {% for p in pacientes %}
+          <option value="{{ p.id }}" {% if paciente_id == p.id|stringformat:"s" %}selected{% endif %}>
+            {{ p.nome }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-6">
+      <label>Buscar medicamento</label>
+      <input class="input" name="q" placeholder="Nome do medicamento..." value="{{ q }}">
+    </div>
+
+    <div class="col-12" style="display:flex; gap:10px;">
+      <button class="btn btn-primary" type="submit">Aplicar filtros</button>
+      <a class="btn btn-ghost" href="/medicamentos/">Limpar</a>
+    </div>
+  </form>
+</div>
+
+<div class="grid" style="margin-bottom:12px;">
+  <div class="col-3">
+    <div class="stat">
+      <div class="label">Total filtrado</div>
+      <div class="value">{{ total }}</div>
+    </div>
+  </div>
+  <div class="col-3">
+    <div class="stat">
+      <div class="label">Pacientes no filtro</div>
+      <div class="value">{{ pacientes_no_filtro }}</div>
+    </div>
+  </div>
+</div>
+
+<table class="table">
+  <tr>
+    <th>Paciente</th>
+    <th>Medicamento</th>
+    <th>Dosagem</th>
+    <th>Via</th>
+    <th>Frequência</th>
+    <th>Horários</th>
+  </tr>
+
+  {% for m in medicamentos %}
+  <tr>
+    <td>{{ m.paciente.nome }}</td>
+    <td>{{ m.nome_medicamento }}</td>
+    <td>{{ m.dosagem|default:"" }}</td>
+    <td>{{ m.via_administracao|default:"" }}</td>
+    <td>{{ m.frequencia|default:"" }}</td>
+    <td>{{ m.horarios|default:"" }}</td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="6">Nenhum medicamento encontrado.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

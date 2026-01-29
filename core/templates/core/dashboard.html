@@ -1,0 +1,182 @@
+{% extends "core/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<style>
+  .kpi-grid{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 1200px){
+    .kpi-grid{ grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 576px){
+    .kpi-grid{ grid-template-columns: 1fr; }
+  }
+
+  .kpi-box{
+    border-radius: 12px;
+    height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #f4efef;
+    box-shadow: 0 8px 18px rgba(0,0,0,.08);
+    text-align: center;
+  }
+
+  .kpi-label{
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  .kpi-value{
+    font-size: 32px;
+    font-weight: 800;
+  }
+  
+  /* Cores dos KPIs */
+  .bg-total    { background: #3498db; } /* azul */
+  .bg-homens   { background: #2980b9; } /* azul mais escuro */
+  .bg-mulheres { background: #9b59b6; } /* roxo */
+  .bg-g1       { background: #2ecc71; } /* verde */
+  .bg-g2       { background: #f1c40f; color:#fff; } /* amarelo */
+  .bg-g3       { background: #e74c3c; } /* vermelho */
+  .bg-meds     { background: #1abc9c; } /* verde água */
+  .bg-oc       { background: #e67e22; } /* laranja */
+
+
+</style>
+
+
+<div class="d-flex align-items-center mb-3" style="position: relative;">
+
+  <!-- Esquerda: Dashboard -->
+  <div>
+    <h2 class="mb-0">Dashboard Gerencial</h2>
+    <small class="text-muted">Visão rápida do sistema</small>
+  </div>
+
+  <!-- Centro: Nome da instituição -->
+  <div style="position:absolute; left:40%; transform:translateX(-25%);">
+    <h2 class="mb-0 fw-bold"
+    style="color:#185196; font-size:36px;">
+  Residência Para Idosos São Camilo Ceará
+</h2>
+
+  </div>
+
+  <!-- Direita: Botões -->
+  <div class="ms-auto d-flex gap-2">
+    <a class="btn btn-outline-secondary" href="{% url 'pacientes_list' %}">
+      👥 Pacientes
+    </a>
+
+    <a class="btn btn-primary" target="_blank"
+       href="{% url 'dashboard_pdf' %}?ini={{ ini }}&fim={{ fim }}">
+      📄 PDF
+    </a>
+  </div>
+
+</div>
+
+<!-- Filtro por período -->
+<div class="card border-0 shadow-sm mb-3" style="border-radius:16px;">
+  <div class="card-body">
+    <form class="row g-2 align-items-end" method="get">
+      <div class="col-md-3">
+        <label class="form-label mb-1">Início</label>
+        <input class="form-control" type="date" name="ini" value="{{ ini }}">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label mb-1">Fim</label>
+        <input class="form-control" type="date" name="fim" value="{{ fim }}">
+      </div>
+
+      <div class="col-md-6 d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Filtrar</button>
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard' %}">Limpar</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- KPIs principais -->
+<div class="kpi-grid">
+
+  <!-- LINHA 1 -->
+  <div class="kpi-box bg-total">
+    <div class="kpi-label">Total de Pacientes</div>
+    <div class="kpi-value">{{ total_pacientes }}</div>
+  </div>
+
+  <div class="kpi-box bg-homens">
+    <div class="kpi-label">Casa 1 – Total</div>
+    <div class="kpi-value">{{ casa1_total }}</div>
+  </div>
+
+  <div class="kpi-box bg-mulheres">
+    <div class="kpi-label">Casa 2 – Total</div>
+    <div class="kpi-value">{{ casa2_total }}</div>
+  </div>
+
+  <div>
+    <div class="kpi-box bg-oc">
+    <div class="kpi-label">Ocorrências Pendentes</div>
+    <div class="kpi-value">{{ ocorr_pend }}</div>
+  </div>
+
+  </div> <!-- espaço para alinhar -->
+
+  <!-- LINHA 2 -->
+  <div class="kpi-box bg-homens">
+    <div class="kpi-label">Casa 1 – Homens</div>
+    <div class="kpi-value">{{ casa1_homens }}</div>
+  </div>
+
+  <div class="kpi-box bg-mulheres">
+    <div class="kpi-label">Casa 1 – Mulheres</div>
+    <div class="kpi-value">{{ casa1_mulheres }}</div>
+  </div>
+
+  <div class="kpi-box bg-homens">
+    <div class="kpi-label">Casa 2 – Homens</div>
+    <div class="kpi-value">{{ casa2_homens }}</div>
+  </div>
+
+  <div class="kpi-box bg-mulheres">
+    <div class="kpi-label">Casa 2 – Mulheres</div>
+    <div class="kpi-value">{{ casa2_mulheres }}</div>
+  </div>
+
+  <!-- LINHA 3 -->
+  <div class="kpi-box bg-g1">
+    <div class="kpi-label">Grau 1 (Indep.)</div>
+    <div class="kpi-value">{{ grau1 }}</div>
+  </div>
+
+  <div class="kpi-box bg-g2">
+    <div class="kpi-label">Grau 2 (Assist.)</div>
+    <div class="kpi-value">{{ grau2 }}</div>
+  </div>
+
+  <div class="kpi-box bg-g3">
+    <div class="kpi-label">Grau 3 (Dep.)</div>
+    <div class="kpi-value">{{ grau3 }}</div>
+  </div>
+
+  <div class="kpi-box bg-meds">
+    <div class="kpi-label">Medicamentos Ativos</div>
+    <div class="kpi-value">{{ meds_ativos }}</div>
+  </div>
+
+  
+</div>
+
+{% endblock %}

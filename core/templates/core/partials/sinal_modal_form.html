@@ -1,0 +1,27 @@
+<form id="sinalForm">
+  {% csrf_token %}
+
+  <h5>{{ paciente.nome }}</h5>
+
+  <div class="mb-2">
+    <label>Temperatura</label>
+    <input class="form-control" name="temperatura" value="{{ sinal.temperatura|default:'' }}">
+  </div>
+
+  <div class="mb-2">
+    <label>Saturação</label>
+    <input class="form-control" name="saturacao_oxigenio" value="{{ sinal.saturacao_oxigenio|default:'' }}">
+  </div>
+
+  <div class="mb-2">
+    <label>Glicemia</label>
+    <input class="form-control" name="glicemia" value="{{ sinal.glicemia|default:'' }}">
+  </div>
+
+  <div class="mb-3">
+    <label>Observações</label>
+    <textarea class="form-control" name="observacoes">{{ sinal.observacoes|default:'' }}</textarea>
+  </div>
+
+  <button class="btn btn-primary w-100">Salvar</button>
+</form>

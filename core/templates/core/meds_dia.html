@@ -1,0 +1,55 @@
+{% extends "core/base.html" %}
+{% block title %}Administração do Dia{% endblock %}
+{% block content %}
+
+<div class="page-title">
+  <h1>Administração do dia — {{ paciente.nome }}</h1>
+  <div style="display:flex; gap:10px;">
+    <a class="btn btn-ghost" href="{% url 'paciente_detail' paciente.id %}">Voltar ao perfil</a>
+  </div>
+</div>
+
+<div class="card">
+  <div><b>Data:</b> {{ dia|date:"d/m/Y" }}</div>
+</div>
+
+<div class="card" style="margin-top:12px;">
+  <table class="table">
+    <tr>
+      <th>Horário</th>
+      <th>Medicamento</th>
+      <th>Dosagem</th>
+      <th>Via</th>
+      <th>Status</th>
+      <th>Ação</th>
+    </tr>
+    {% for d in doses %}
+      <tr>
+        <td>{{ d.horario|time:"H:i" }}</td>
+        <td>{{ d.prescricao.nome_medicamento }}</td>
+        <td>{{ d.prescricao.dosagem|default:"" }}</td>
+        <td>{{ d.prescricao.via|default:"" }}</td>
+        <td>
+          {% if d.administrado %}
+            ✅ Administrado<br>
+            <small>{{ d.administrado_em|date:"d/m H:i" }} — {{ d.administrado_por.username }}</small>
+          {% else %}
+            ⏳ Pendente
+          {% endif %}
+        </td>
+        <td>
+          <form method="post" action="{% url 'dose_toggle' d.id %}">
+            {% csrf_token %}
+            <button class="btn {% if d.administrado %}btn-ghost{% else %}btn-primary{% endif %}" type="submit">
+              {% if d.administrado %}Desmarcar{% else %}Marcar administrado{% endif %}
+            </button>
+          </form>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6">Sem doses para hoje.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+{% endblock %}

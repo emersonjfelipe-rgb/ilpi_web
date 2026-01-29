@@ -1,0 +1,39 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <link rel="stylesheet" href="{% static 'core/app.css' %}">
+  <script src="{% static 'core/app.js' %}" defer></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}ILPI Web{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'core/styles.css' %}">
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">ILPI Web</div>
+
+      <div class="nav">
+        <a class="nav-link" href="{% url 'estoque_dashboard' %}">📦 Estoque</a>
+        <a href="/" class="{% if request.path == '/' %}active{% endif %}">Dashboard</a>
+        <a href="/pacientes/" class="{% if '/pacientes' in request.path %}active{% endif %}">Pacientes</a>
+        <a href="/medicamentos/" class="{% if '/medicamentos' in request.path %}active{% endif %}">Medicamentos</a>
+        <a href="/sinais/" class="{% if '/sinais' in request.path %}active{% endif %}">Sinais Vitais</a>
+        <a href="/ocorrencias/" class="{% if '/ocorrencias' in request.path %}active{% endif %}">Ocorrências</a>
+        <a href="/admin/">Admin</a>
+        <a href="/accounts/logout/">Sair</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    {% if erro %}
+      <div class="alert alert-error">{{ erro }}</div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

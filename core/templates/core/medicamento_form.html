@@ -1,0 +1,59 @@
+{% extends "core/base.html" %}
+{% block title %}Novo Medicamento - ILPI{% endblock %}
+
+{% block content %}
+<div class="page-title">
+  <h1>Novo Medicamento</h1>
+</div>
+
+<div class="card">
+  {% if erro %}<div class="alert alert-error">{{ erro }}</div>{% endif %}
+  <form method="post" class="grid">
+    {% csrf_token %}
+
+    <div class="col-6">
+      <label>Paciente</label>
+      <select name="paciente" class="input" required>
+        <option value="">Selecione...</option>
+        {% for p in pacientes %}
+          <option value="{{ p.id }}">{{ p.nome }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-6">
+      <label>Medicamento</label>
+      <input class="input" name="nome_medicamento" required>
+    </div>
+
+    <div class="col-4">
+      <label>Dosagem</label>
+      <input class="input" name="dosagem" placeholder="Ex: 500mg / 1 comp.">
+    </div>
+
+    <div class="col-4">
+      <label>Via</label>
+      <select class="input" name="via">
+        <option value="">—</option>
+        <option>Oral</option><option>Intravenosa</option><option>Intramuscular</option>
+        <option>Subcutânea</option><option>Tópica</option><option>Inalatória</option>
+      </select>
+    </div>
+
+    <div class="col-4">
+      <label>Frequência</label>
+      <input class="input" name="frequencia" placeholder="Ex: 8/8h">
+    </div>
+
+    <div class="col-6">
+      <label>Horários</label>
+      <input class="input" name="horarios" placeholder="Ex: 08:00, 14:00, 20:00">
+    </div>
+
+    <div class="col-12" style="display:flex; gap:10px;">
+      <button class="btn btn-primary" type="submit">Salvar</button>
+      <a class="btn btn-ghost" href="/medicamentos/">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

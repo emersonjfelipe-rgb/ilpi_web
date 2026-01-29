@@ -1,0 +1,147 @@
+{% extends "core/base.html" %}
+{% block title %}Paciente - {{ paciente.nome }}{% endblock %}
+
+{% block content %}
+<div class="card p-3 mb-3">
+  <h5>Dados Clínicos</h5>
+  <p><strong>Data de Nascimento:</strong> {{ paciente.data_nascimento|default:"—" }}</p>
+  <p><strong>Data de Entrada:</strong> {{ paciente.data_entrada|default:"—" }}</p>
+  <p><strong>Comorbidades:</strong> {{ paciente.comorbidades|default:"—" }}</p>
+  <p><strong>Alergias:</strong>
+     {% if paciente.possui_alergia %}
+       {{ paciente.alergias|default:"Sim" }}
+     {% else %}
+       Não
+     {% endif %}
+  </p>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h2>{{ paciente.nome }}</h2>
+    <small class="text-muted">
+      <div class="mt-2 d-flex flex-wrap gap-2">
+  {% for f in flags %}
+    <span class="badge rounded-pill {{ f.cls }}">{{ f.label }}</span>
+  {% empty %}
+    <span class="badge rounded-pill bg-secondary">Sem flags</span>
+  {% endfor %}
+  </div>
+
+      Grau {{ paciente.grau_dependencia }} • Quarto {{ paciente.quarto|default:"—" }} • Leito {{ paciente.leito|default:"—" }}
+    </small>
+  </div>
+<div class="col-3">
+  <div class="stat">
+    <div class="label">Idade</div>
+    <div class="value">
+      {% if idade %}{{ idade }} anos{% else %}—{% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="col-3">
+  <div class="stat">
+    <div class="label">Tempo na ILPI</div>
+    <div class="value">{{ tempo_ilpi.texto }}</div>
+  </div>
+</div>
+
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-secondary" href="{% url 'pacientes_list' %}">⬅ Voltar</a>
+    <a class="btn btn-primary" target="_blank" href="{% url 'paciente_pdf' paciente.id %}">📄 PDF</a>
+    <a class="btn btn-primary" href="{% url 'meds_dia' paciente.id %}">💊 Meds do dia</a>
+  </div>
+</div>
+
+<ul class="nav nav-tabs">
+  <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-dados">Dados</button></li>
+  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-med">Medicamentos</button></li>
+  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-sinais">Sinais</button></li>
+  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-oc">Ocorrências</button></li>
+</ul>
+
+<div class="tab-content border p-3 bg-white">
+
+<!-- DADOS -->
+<div class="tab-pane fade show active" id="tab-dados">
+  <div class="row">
+    <div class="col-md-6"><b>CPF:</b> {{ paciente.cpf|default:"—" }}</div>
+    <div class="col-md-6"><b>Telefone:</b> {{ paciente.telefone_emergencia|default:"—" }}</div>
+    <div class="col-12 mt-2"><b>Alergias:</b> {{ paciente.alergias|default:"—" }}</div>
+  </div>
+</div>
+
+<!-- MEDICAMENTOS -->
+<div class="tab-pane fade" id="tab-med">
+  <a class="btn btn-sm btn-primary mb-2"
+     href="{% url 'medicamento_create' %}?paciente_id={{ paciente.id }}&next={{ request.path }}?tab=med">
+     ➕ Novo
+  </a>
+  <table class="table table-sm">
+    {% for m in medicamentos %}
+      <tr><td>{{ m.nome_medicamento }}</td><td>{{ m.dosagem }}</td></tr>
+    {% empty %}
+      <tr><td>Sem medicamentos.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+<!-- SINAIS -->
+<div class="tab-pane fade" id="tab-sinais">
+  <a class="btn btn-sm btn-primary mb-2"
+     href="{% url 'sinal_create' %}?paciente={{ paciente.id }}&next={{ request.path }}?tab=sinais">
+     ➕ Novo Sinal
+  </a>
+
+  <table class="table table-sm">
+    <thead>
+      <tr><th>Data</th><th>Temp</th><th>Sat</th><th>Dextro</th></tr>
+    </thead>
+    {% for s in sinais %}
+      <tr>
+        <td>{{ s.data_hora|date:"d/m H:i" }}</td>
+        <td>
+          {{ s.temperatura }}
+          {% if s.temperatura and s.temperatura >= 37.8 %}
+            <span class="badge badge-alert">⚠</span>
+          {% endif %}
+        </td>
+        <td>{{ s.saturacao_oxigenio }}</td>
+        <td>{{ s.glicemia }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4">Sem sinais.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+<!-- OCORRÊNCIAS -->
+<div class="tab-pane fade" id="tab-oc">
+  <a class="btn btn-sm btn-primary mb-2"
+     href="{% url 'ocorrencia_create' %}?paciente={{ paciente.id }}&next={{ request.path }}?tab=oc">
+     ➕ Nova
+  </a>
+
+  <table class="table table-sm">
+    {% for o in ocorrencias %}
+      <tr>
+        <td>{{ o.data_hora|date:"d/m H:i" }}</td>
+        <td>{{ o.tipo_ocorrencia }}</td>
+        <td>
+          {% if o.resolvido %}
+            <span class="badge badge-ok">Resolvida</span>
+          {% else %}
+            <span class="badge badge-alert">Pendente</span>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td>Sem ocorrências.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+</div>
+
+{% endblock %}

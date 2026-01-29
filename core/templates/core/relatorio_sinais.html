@@ -1,0 +1,27 @@
+{% extends "core/relatorio_base.html" %}
+{% block content %}
+
+<table>
+  <tr>
+    <th>Paciente</th>
+    <th>Data/Hora</th>
+    <th>Temp</th>
+    <th>Sat</th>
+    <th>Dextro</th>
+    <th>PA</th>
+    <th>FC</th>
+  </tr>
+  {% for s in sinais %}
+  <tr>
+    <td>{{ s.paciente.nome }}</td>
+    <td>{{ s.data_hora }}</td>
+    <td>{{ s.temperatura }}</td>
+    <td>{{ s.saturacao_oxigenio }}</td>
+    <td>{{ s.glicemia }}</td>
+    <td>{{ s.pressao_arterial }}</td>
+    <td>{{ s.frequencia_cardiaca }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}

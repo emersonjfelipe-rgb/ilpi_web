@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 12px; color: #222; }
+    h1 { font-size: 18px; margin: 0 0 8px; }
+    h2 { font-size: 14px; margin: 18px 0 8px; border-bottom: 1px solid #ddd; padding-bottom: 4px;}
+    .meta { margin-bottom: 10px; color:#555; }
+    .grid { display: flex; gap: 10px; }
+    .box { border:1px solid #ddd; padding:10px; border-radius:6px; flex:1; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ddd; padding: 6px; vertical-align: top; }
+    th { background: #f3f3f3; text-align: left; }
+    .small { font-size: 10px; color:#666; }
+  </style>
+</head>
+<body>
+
+  <h1>Ficha do Paciente</h1>
+  <div class="meta">
+    Gerado em: {% now "d/m/Y H:i" %} — Usuário: {{ user.username }}
+  </div>
+
+  <div class="grid">
+    <div class="box">
+      <b>Paciente:</b> {{ paciente.nome }}<br>
+      <b>Sexo:</b> {{ paciente.sexo|default:"—" }}<br>
+      <b>Nascimento:</b> {{ paciente.data_nascimento|default:"—" }}<br>
+      <b>CPF:</b> {{ paciente.cpf|default:"—" }}<br>
+      <b>Entrada ILPI:</b> {{ paciente.entrada_ilpi|default:"—" }}
+    </div>
+    <div class="box">
+      <b>Quarto/Leito:</b> {{ paciente.quarto|default:"—" }} / {{ paciente.leito|default:"—" }}<br>
+      <b>Grau:</b> {{ paciente.grau_dependencia|default:"—" }}<br>
+      <b>Contato:</b> {{ paciente.contato_emergencia|default:"—" }}<br>
+      <b>Telefone:</b> {{ paciente.telefone_emergencia|default:"—" }}
+    </div>
+  </div>
+
+  <h2>Medicamentos</h2>
+  <table>
+    <tr><th>Medicamento</th><th>Dosagem</th><th>Via</th><th>Frequência</th><th>Horários</th></tr>
+    {% for m in medicamentos %}
+      <tr>
+        <td>{{ m.nome_medicamento }}</td>
+        <td>{{ m.dosagem|default:"" }}</td>
+        <td>{{ m.via_administracao|default:"" }}</td>
+        <td>{{ m.frequencia|default:"" }}</td>
+        <td>{{ m.horarios|default:"" }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5">Sem medicamentos cadastrados.</td></tr>
+    {% endfor %}
+  </table>
+
+  <h2>Últimos Sinais Vitais (50)</h2>
+  <table>
+    <tr><th>Data/Hora</th><th>Temp</th><th>PA</th><th>FC</th><th>Sat</th><th>Glic</th><th>Dor</th></tr>
+    {% for s in sinais %}
+      <tr>
+        <td>{{ s.data_hora }}</td><td>{{ s.temperatura }}</td><td>{{ s.pressao_arterial }}</td>
+        <td>{{ s.frequencia_cardiaca }}</td><td>{{ s.saturacao_oxigenio }}</td>
+        <td>{{ s.glicemia }}</td><td>{{ s.dor_escala }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7">Sem sinais vitais.</td></tr>
+    {% endfor %}
+  </table>
+
+  <h2>Últimas Ocorrências (50)</h2>
+  <table>
+    <tr><th>Data/Hora</th><th>Tipo</th><th>Gravidade</th><th>Status</th><th>Descrição</th></tr>
+    {% for o in ocorrencias %}
+      <tr>
+        <td>{{ o.data_hora }}</td><td>{{ o.tipo_ocorrencia }}</td><td>{{ o.gravidade }}</td>
+        <td>{% if o.resolvido %}Resolvida{% else %}Pendente{% endif %}</td>
+        <td>{{ o.descricao }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5">Sem ocorrências.</td></tr>
+    {% endfor %}
+  </table>
+
+  <p class="small">Documento interno — ILPI</p>
+</body>
+</html>
+S

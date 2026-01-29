@@ -1,0 +1,61 @@
+{% extends "core/base.html" %}
+{% block title %}Nova Ocorrência - ILPI{% endblock %}
+
+{% block content %}
+<div class="page-title">
+  <h1>Nova Ocorrência</h1>
+</div>
+
+<div class="card">
+  <form method="post" class="grid">
+    {% csrf_token %}
+
+    <div class="col-6">
+      <label>Paciente</label>
+      <select name="paciente" class="input" required>
+        <option value="">Selecione...</option>
+        {% for p in pacientes %}
+          <option value="{{ p.id }}">{{ p.nome }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-6">
+      <label>Tipo</label>
+      <select name="tipo" class="input" required>
+        <option value="">Selecione...</option>
+        <option>Queda</option>
+        <option>Febre</option>
+        <option>Dor</option>
+        <option>Agitação</option>
+        <option>Confusão Mental</option>
+        <option>Desidratação</option>
+        <option>Queda de Pressão</option>
+        <option>Alergia</option>
+        <option>Reação à Medicação</option>
+        <option>Outro</option>
+      </select>
+    </div>
+
+    <div class="col-4">
+      <label>Gravidade</label>
+      <select name="gravidade" class="input" required>
+        <option>Baixa</option>
+        <option>Média</option>
+        <option>Alta</option>
+        <option>Emergência</option>
+      </select>
+    </div>
+
+    <div class="col-12">
+      <label>Descrição</label>
+      <textarea class="input" name="descricao" rows="4" required></textarea>
+    </div>
+
+    <div class="col-12" style="display:flex; gap:10px;">
+      <button class="btn btn-primary" type="submit">Salvar</button>
+      <a class="btn btn-ghost" href="/ocorrencias/">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

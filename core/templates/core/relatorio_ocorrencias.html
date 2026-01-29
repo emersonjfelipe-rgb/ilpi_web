@@ -1,0 +1,23 @@
+{% extends "core/relatorio_base.html" %}
+{% block content %}
+
+<table>
+  <tr>
+    <th>Paciente</th>
+    <th>Data/Hora</th>
+    <th>Tipo</th>
+    <th>Gravidade</th>
+    <th>Status</th>
+  </tr>
+  {% for o in ocorrencias %}
+  <tr>
+    <td>{{ o.paciente.nome }}</td>
+    <td>{{ o.data_hora }}</td>
+    <td>{{ o.tipo_ocorrencia }}</td>
+    <td>{{ o.gravidade }}</td>
+    <td>{% if o.resolvido %}Resolvida{% else %}Pendente{% endif %}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}
