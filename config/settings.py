@@ -17,6 +17,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key-local")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+TEMPLATES[0]["DIRS"] = [BASE_DIR / "templates"]
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,14 +26,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")
 # DEBUGSECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "0") == "1"
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
 
 
 ALLOWED_HOSTS = [
-   "ilpiweb-production.up.railway.app",
-    "localhost",
-    "127.0.0.1",
+    "localhost", "127.0.0.1",
+    "ilpiweb-production.up.railway.app",
+    ".railway.app",
 ]
 
 
@@ -83,10 +84,9 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-"default": dj_database_url.config(
-        default="sqlite:///db.sqlite3",
-        conn_max_age=600,
-        ssl_require=False)
+"default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",}
         }
 
 
@@ -126,7 +126,7 @@ USE_TZ = True
 LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/accounts/login/"
-CSRF_TRUSTED_ORIGINS = CSRF_TRUSTED_ORIGINS = [
+CSRF_TRUSTED_ORIGINS = [
     "https://ilpiweb-production.up.railway.app",
 ]
 
@@ -135,7 +135,7 @@ if railway_domain:
     CSRF_TRUSTED_ORIGINS.append(f"https://{railway_domain}")
 
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = 'static/'
 # ===== Identidade da ILPI (usado nos PDFs) =====
 ILPI_NOME = "RESIDÊNCIA PARA IDOSOS SÃO CAMILO CEARA"
@@ -143,13 +143,3 @@ ILPI_CNPJ = "16.417.373/0001-00"
 ILPI_ENDERECO = "Rua ITAJAI, Nº 160 - Bairro LAGOINHA - EUSÉBIO/CE"
 ILPI_TELEFONE = "(85) 98774-3098"
 PDF_EXPORT_GROUPS = ["admin", "enfermagem"]  # quem pode exportar PDFs
-MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-]
