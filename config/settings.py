@@ -9,9 +9,9 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import dj_database_url
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,10 +20,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ag1*a#le%gtgw8c4^#^4@o!vr)&82qm0(97accy*w6v)fl+=!('
-
+SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")
 # DEBUGSECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv("DEBUG", "0") == "1"
 
 
 
@@ -116,7 +115,13 @@ USE_TZ = True
 LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/accounts/login/"
+CSRF_TRUSTED_ORIGINS = []
+railway_domain = os.getenv("RAILWAY_PUBLIC_DOMAIN")
+if railway_domain:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{railway_domain}")
 
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = 'static/'
 # ===== Identidade da ILPI (usado nos PDFs) =====
 ILPI_NOME = "RESIDÊNCIA PARA IDOSOS SÃO CAMILO CEARA"
@@ -134,19 +139,3 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-import os
-from pathlib import Path
-import dj_database_url
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-ALLOWED_HOSTS = ["*"]
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://*.railway.app",
-]
-
